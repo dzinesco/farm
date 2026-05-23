@@ -115,6 +115,9 @@ export interface ProjectState {
 
   // Space-to-pan
   previousToolMode: ToolMode | null
+
+  // Cursor world position
+  cursorWorldPos: { x: number; y: number } | null
 }
 
 // ─── Store ───────────────────────────────────────────────────────────
@@ -153,6 +156,9 @@ interface FRMXStore {
 
   // Space-to-pan
   previousToolMode: ToolMode | null
+
+  // Cursor world position
+  cursorWorldPos: { x: number; y: number } | null
 
   // Actions
   setProject: (project: Project) => void
@@ -207,6 +213,9 @@ interface FRMXStore {
 
   // Space-to-pan
   setPreviousToolMode: (mode: ToolMode | null) => void
+
+  // Cursor world position
+  setCursorWorldPos: (pos: { x: number; y: number } | null) => void
 }
 
 // ─── Default project factory ─────────────────────────────────────────
@@ -267,6 +276,8 @@ export const useFRMXStore = create<FRMXStore>((set, get) => ({
 
   showShortcutLegend: false,
   previousToolMode: null,
+
+  cursorWorldPos: null,
 
   setProject: (project) => set({ project }),
 
@@ -495,6 +506,8 @@ export const useFRMXStore = create<FRMXStore>((set, get) => ({
   setShowShortcutLegend: (v) => set({ showShortcutLegend: v }),
   setPreviousToolMode: (mode) => set({ previousToolMode: mode }),
 
+  setCursorWorldPos: (pos) => set({ cursorWorldPos: pos }),
+
   reset: () => {
     set({
       project: createEmptyProject(),
@@ -515,6 +528,8 @@ export const useFRMXStore = create<FRMXStore>((set, get) => ({
       },
       showShortcutLegend: false,
       previousToolMode: null,
+
+      cursorWorldPos: null,
     })
   },
 }))

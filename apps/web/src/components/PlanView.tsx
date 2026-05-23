@@ -271,8 +271,15 @@ export default function PlanView() {
   }, [toolMode, viewport, project, selectWall])
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isPanningRef.current && !(toolModeRef.current === 'draw-wall' && isDrawingRef.current) && !(toolModeRef.current === 'select')) return
     const canvas = canvasRef.current
+    if (canvas) {
+      const rect = canvas.getBoundingClientRect()
+      const worldX = (e.clientX - rect.left - viewport.panX) / viewport.zoom
+      const worldY = (e.clientY - rect.top - viewport.panY) / viewport.zoom
+      useFRMXStore.getState().setCursorWorldPos({ x: worldX, y: worldY })
+    }
+
+    if (!isPanningRef.current && !(toolModeRef.current === 'draw-wall' && isDrawingRef.current) && !(toolModeRef.current === 'select')) return
     if (!canvas) return
     const rect = canvas.getBoundingClientRect()
     const x = e.clientX - rect.left
@@ -493,7 +500,7 @@ export default function PlanView() {
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
-        onMouseLeave={handleMouseUp}
+        onMouseLeave={() => useFRMXStore.getState().setCursorWorldPos(null)}
         onWheel={handleWheel}
       />
 

@@ -210,12 +210,15 @@ body {
 }
 
 .shortcut-legend .legend-panel {
-  background: var(--panel-bg);
-  border: 1px solid rgba(255,255,255,0.1);
+  background: var(--glass-bg);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--glass-border);
   border-radius: 8px;
   padding: 20px 24px;
   min-width: 380px;
   max-width: 480px;
+  box-shadow: var(--shadow-panel-1), var(--shadow-panel-2);
 }
 
 .shortcut-legend .legend-panel h2 {

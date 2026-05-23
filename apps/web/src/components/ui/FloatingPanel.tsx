@@ -74,15 +74,12 @@ export default function FloatingPanel({
         left: pos.x,
         top: pos.y,
         width,
-        background: '#0d0d0d',
-        borderRadius: '6px',
-        border: `1px solid ${accentColor}`,
+        '--accent-color': accentColor,
         zIndex: isDragging ? 150 : 100,
-      }}
+      } as React.CSSProperties}
     >
       <div
         className="title-bar"
-        style={{ borderColor: `${accentColor}40`, color: accentColor }}
         onMouseDown={onMouseDown}
       >
         <span>{title}</span>

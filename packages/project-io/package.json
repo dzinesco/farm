@@ -1,0 +1,40 @@
+{
+  "name": "@frmx/project-io",
+  "version": "0.0.1",
+  "private": true,
+  "main": "./dist/index.js",
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js",
+      "types": "./dist/index.d.ts"
+    }
+  },
+  "scripts": {
+    "build": "tsup src/index.ts --format esm,cjs --dts --clean --config tsup.config.ts",
+    "dev": "tsup src/index.ts --format esm,cjs --dts --watch",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "lint": "eslint src/"
+  },
+  "dependencies": {
+    "@frmx/core": "workspace:*",
+    "@frmx/calculator": "workspace:*",
+    "@frmx/geometry": "workspace:*",
+    "@frmx/layers": "workspace:*",
+    "@frmx/framing-engine": "workspace:*",
+    "@frmx/panelizer": "workspace:*",
+    "@frmx/modules": "workspace:*",
+    "@frmx/materials": "workspace:*",
+    "@frmx/reports": "workspace:*"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.0",
+    "tsup": "^8.3.0",
+    "vitest": "^3.0.0",
+    "@types/node": "^22.0.0"
+  }
+}

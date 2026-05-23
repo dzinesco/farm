@@ -1,0 +1,14 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src"
+  },
+  "include": ["src/**/*"],
+  "references": [
+    { "path": "../calculator" },
+    { "path": "../core" },
+    { "path": "../geometry" },
+    { "path": "../framing-engine" }
+  ]
+}

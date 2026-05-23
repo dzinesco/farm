@@ -1,0 +1,10 @@
+{
+  "[project]/dev/may22/frmx/apps/web/src/features/three/components/Scene.tsx [app-client] (ecmascript, next/dynamic entry)": {
+    "id": "[project]/dev/may22/frmx/apps/web/src/features/three/components/Scene.tsx [app-client] (ecmascript, next/dynamic entry)",
+    "files": [
+      "static/chunks/dev_may22_frmx_apps_web_src_features_three_components_Scene3D_tsx_fedb2ba6._.js",
+      "static/chunks/dev_may22_frmx_apps_web_src_features_three_components_Scene_tsx_67449a0c._.js",
+      "static/chunks/dev_may22_frmx_apps_web_src_features_three_components_Scene_tsx_7a65d7dc._.js"
+    ]
+  }
+}

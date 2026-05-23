@@ -21,3 +21,8 @@
 {"type":"screen-added","file":"/Users/openclaw/dev/may22/frmx/.superpowers/brainstorm/27262-1779503471/content/elevation-interaction.html"}
 {"source":"user-event","type":"click","text":"A\n    \n      Fully interactive\n      Click panel → selected (cyan outline). Drag to move. Double-click stud → edit position. Direct manipulation like Figma — plan and elevation both as editors.","choice":"a","id":null,"timestamp":1779504019116}
 {"type":"screen-added","file":"/Users/openclaw/dev/may22/frmx/.superpowers/brainstorm/27262-1779503471/content/waiting3.html"}
+{"type":"screen-added","file":"/Users/openclaw/dev/may22/frmx/.superpowers/brainstorm/27262-1779503471/content/01-current-state.html"}
+{"type":"screen-added","file":"/Users/openclaw/dev/may22/frmx/.superpowers/brainstorm/27262-1779503471/content/02-priority-areas.html"}
+{"source":"user-event","type":"click","text":"D\n    \n      Full UI Pass\n      Everything — comprehensive polish across all surfaces","choice":"full-ui","id":null,"timestamp":1779505795552}
+{"type":"screen-added","file":"/Users/openclaw/dev/may22/frmx/.superpowers/brainstorm/27262-1779503471/content/03-intensity.html"}
+{"source":"user-event","type":"click","text":"C\n    \n      Dramatic\n      Bold shadows, pronounced elevation. The dark neon aesthetic pushed to its fullest — \"glassmorphism-adjacent\".","choice":"dramatic","id":null,"timestamp":1779505820466}

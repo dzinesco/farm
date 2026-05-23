@@ -61,6 +61,8 @@ export default function FloatingPanel({
         left: pos.x,
         top: pos.y,
         width,
+        background: '#0d0d0d',
+        borderRadius: '6px',
         border: `1px solid ${accentColor}`,
         zIndex: isDragging ? 150 : 100,
       }}

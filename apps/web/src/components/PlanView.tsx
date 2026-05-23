@@ -42,6 +42,7 @@ export default function PlanView() {
   orthoEnabledRef.current = orthoEnabled
   const snapEnabledRef = useRef(snapEnabled)
   snapEnabledRef.current = snapEnabled
+  const shiftHeldRef = useRef(false)
 
   // Status bar helpers
   const wallCount = project.building.levels.reduce((sum, lvl) => sum + lvl.walls.length, 0)
@@ -354,6 +355,15 @@ export default function PlanView() {
         snappedX = gridSnap(snappedX, gridSize)
         snappedY = gridSnap(snappedY, gridSize)
       }
+      // Apply shift lock to ortho if shift is held
+      if (shiftHeldRef.current && orthoEnabledRef.current) {
+        const last = drawingPointsRef.current[drawingPointsRef.current.length - 1]
+        if (last) {
+          const ortho = orthoSnap({ x: snappedX, y: snappedY }, last)
+          snappedX = ortho.x
+          snappedY = ortho.y
+        }
+      }
 
       const pts = drawingPointsRef.current
       if (pts.length > 0) {
@@ -443,8 +453,17 @@ export default function PlanView() {
         useFRMXStore.getState().redo()
       }
     }
+    const handleShiftKey = (e: KeyboardEvent) => {
+      shiftHeldRef.current = e.key === 'Shift'
+    }
     window.addEventListener('keydown', handleKeyDown)
-    return () => window.removeEventListener('keydown', handleKeyDown)
+    window.addEventListener('keyup', handleShiftKey)
+    window.addEventListener('keydown', handleShiftKey)
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown)
+      window.removeEventListener('keyup', handleShiftKey)
+      window.removeEventListener('keydown', handleShiftKey)
+    }
   }, [])
 
   // Keyboard shortcuts for tools

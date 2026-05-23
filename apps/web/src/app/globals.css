@@ -14,10 +14,29 @@
   /* HUD chip base */
   --chip-bg: rgba(0, 212, 255, 0.15);
   --chip-border: rgba(0, 212, 255, 0.5);
+
+  /* Depth shadow system */
+  --shadow-panel-1: 0 8px 32px rgba(0,0,0,0.6);
+  --shadow-panel-2: 0 2px 8px rgba(0,0,0,0.4);
+  --shadow-panel-3: inset 0 1px 0 rgba(255,255,255,0.05);
+  --shadow-panel-hover: 0 12px 40px rgba(0,0,0,0.65);
+  --shadow-panel-active: 0 16px 48px rgba(0,0,0,0.7);
+  --shadow-chip: 0 2px 12px rgba(0,0,0,0.4);
+
+  /* Glow colors for HUD chips */
+  --glow-cyan: rgba(0,212,255,0.3);
+  --glow-pink: rgba(255,107,157,0.3);
+  --glow-yellow: rgba(255,217,61,0.3);
+  --glow-magenta: rgba(199,125,255,0.3);
+
+  /* Glass treatment */
+  --glass-bg: rgba(18,18,18,0.85);
+  --glass-border: rgba(255,255,255,0.08);
+  --glass-highlight: rgba(255,255,255,0.1);
 }
 
 body {
-  background: var(--background);
+  background: radial-gradient(ellipse at center, #0d0d0d 0%, #050505 100%);
   color: var(--foreground);
   font-family: system-ui, -apple-system, sans-serif;
 }
@@ -25,16 +44,21 @@ body {
 /* Panel base */
 .floating-panel {
   position: absolute;
-  background: var(--panel-bg);
+  background: var(--glass-bg);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
   border-radius: 6px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--glass-border);
+  box-shadow: var(--shadow-panel-1), var(--shadow-panel-2), var(--shadow-panel-3);
   user-select: none;
   z-index: 100;
+  transition: box-shadow 0.2s ease;
 }
 
 .floating-panel.dragging {
   opacity: 0.9;
   cursor: grabbing;
+  box-shadow: var(--shadow-panel-active);
 }
 
 .floating-panel .title-bar {
@@ -42,12 +66,13 @@ body {
   align-items: center;
   justify-content: space-between;
   padding: 8px 12px;
-  border-bottom: 1px solid;
+  border-bottom: 1px solid rgba(0,0,0,0.3);
   cursor: grab;
   font-size: 11px;
   font-weight: 600;
   letter-spacing: 0.05em;
   text-transform: uppercase;
+  background: linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%);
 }
 
 .floating-panel .title-bar:active {
@@ -73,6 +98,10 @@ body {
 .floating-panel .close-btn:hover {
   opacity: 1;
   background: rgba(255,255,255,0.1);
+}
+
+.floating-panel:hover:not(.dragging) {
+  box-shadow: var(--shadow-panel-hover), var(--shadow-panel-2), var(--shadow-panel-3);
 }
 
 /* HUD chips */

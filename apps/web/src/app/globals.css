@@ -3,10 +3,211 @@
 :root {
   --background: #ffffff;
   --foreground: #000000;
+
+  /* Panel colors */
+  --panel-bg: #0d0d0d;
+  --panel-cyan: #00d4ff;
+  --panel-pink: #ff6b9d;
+  --panel-yellow: #ffd93d;
+  --panel-magenta: #c77dff;
+
+  /* HUD chip base */
+  --chip-bg: rgba(0, 212, 255, 0.15);
+  --chip-border: rgba(0, 212, 255, 0.5);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family: system-ui, -apple-system, sans-serif;
+}
+
+/* Panel base */
+.floating-panel {
+  position: absolute;
+  background: var(--panel-bg);
+  border-radius: 6px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+  user-select: none;
+  z-index: 100;
+}
+
+.floating-panel.dragging {
+  opacity: 0.9;
+  cursor: grabbing;
+}
+
+.floating-panel .title-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  border-bottom: 1px solid;
+  cursor: grab;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+}
+
+.floating-panel .title-bar:active {
+  cursor: grabbing;
+}
+
+.floating-panel .panel-body {
+  padding: 8px;
+}
+
+.floating-panel .close-btn {
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 3px;
+  font-size: 12px;
+  opacity: 0.6;
+  cursor: pointer;
+}
+
+.floating-panel .close-btn:hover {
+  opacity: 1;
+  background: rgba(255,255,255,0.1);
+}
+
+/* HUD chips */
+.hud-chip {
+  position: fixed;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 11px;
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', monospace;
+  pointer-events: none;
+  z-index: 200;
+  border: 1px solid;
+}
+
+.hud-chip.tool {
+  top: 12px;
+  left: 12px;
+  color: var(--panel-cyan);
+  border-color: rgba(0, 212, 255, 0.5);
+  background: rgba(0, 212, 255, 0.15);
+}
+
+.hud-chip.snap {
+  top: 12px;
+  right: 12px;
+  color: var(--panel-pink);
+  border-color: rgba(255, 107, 157, 0.5);
+  background: rgba(255, 107, 157, 0.15);
+}
+
+.hud-chip.dimension {
+  bottom: 12px;
+  left: 12px;
+  color: var(--panel-yellow);
+  border-color: rgba(255, 217, 61, 0.5);
+  background: rgba(255, 217, 61, 0.15);
+}
+
+.hud-chip.coords {
+  bottom: 12px;
+  right: 12px;
+  color: var(--panel-magenta);
+  border-color: rgba(199, 125, 255, 0.5);
+  background: rgba(199, 125, 255, 0.15);
+}
+
+/* Tool button */
+.tool-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 4px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: background 0.15s;
+  border: 1px solid transparent;
+  color: rgba(255,255,255,0.6);
+}
+
+.tool-btn:hover {
+  background: rgba(255,255,255,0.08);
+  color: white;
+}
+
+.tool-btn.active {
+  color: var(--panel-cyan);
+  border-color: rgba(0, 212, 255, 0.4);
+  background: rgba(0, 212, 255, 0.1);
+}
+
+.tool-btn .shortcut {
+  font-size: 10px;
+  opacity: 0.5;
+  margin-left: auto;
+}
+
+/* Shortcut legend overlay */
+.shortcut-legend {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 500;
+}
+
+.shortcut-legend .legend-panel {
+  background: var(--panel-bg);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 8px;
+  padding: 20px 24px;
+  min-width: 380px;
+  max-width: 480px;
+}
+
+.shortcut-legend .legend-panel h2 {
+  font-size: 14px;
+  font-weight: 600;
+  color: white;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.shortcut-legend .shortcut-group {
+  margin-bottom: 14px;
+}
+
+.shortcut-legend .shortcut-group h3 {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(255,255,255,0.4);
+  margin-bottom: 6px;
+}
+
+.shortcut-legend .shortcut-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 3px 0;
+  font-size: 12px;
+}
+
+.shortcut-legend .shortcut-row .keys {
+  font-family: monospace;
+  font-size: 11px;
+  padding: 2px 6px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 3px;
+  color: rgba(255,255,255,0.7);
+}
+
+.shortcut-legend .shortcut-row .desc {
+  color: rgba(255,255,255,0.6);
 }

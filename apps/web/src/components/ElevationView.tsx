@@ -13,6 +13,8 @@ export default function ElevationView() {
   const { project, viewport, setViewport, selectedWallId, selectedPanelId, toolMode, selectWall, selectPanel } = useFRMXStore()
   const isPanningRef = useRef(false)
   const lastPosRef = useRef({ x: 0, y: 0 })
+  const draggingPanelRef = useRef<{ panelId: string; startX: number; origPosition: number } | null>(null)
+  const boxSelectRef = useRef<{ startX: number; startY: number; mode: 'window' | 'crossing' } | null>(null)
 
   const selectedWall = (() => {
     for (const level of project.building.levels) {
@@ -65,6 +67,23 @@ export default function ElevationView() {
 
     // Draw elevation of selected wall
     drawElevation(ctx, selectedWall, viewport, selectedPanelId, width, height)
+
+    // Draw box selection
+    if (boxSelectRef.current) {
+      const canvas = canvasRef.current
+      if (canvas) {
+        const rect = canvas.getBoundingClientRect()
+        const startX = boxSelectRef.current.startX - rect.left
+        const startY = boxSelectRef.current.startY - rect.top
+        const curX = lastPosRef.current.x
+        const curY = lastPosRef.current.y
+        ctx.strokeStyle = boxSelectRef.current.mode === 'window' ? '#00d4ff' : '#ffd93d'
+        ctx.lineWidth = 1
+        ctx.setLineDash([4, 4])
+        ctx.strokeRect(startX, startY, curX - startX, curY - startY)
+        ctx.setLineDash([])
+      }
+    }
   }, [project, viewport, selectedWallId, selectedPanelId])
 
   function drawElevation(
@@ -104,7 +123,7 @@ export default function ElevationView() {
       const isSelected = panel.id === selectedPanelId
 
       // Panel fill
-      ctx.fillStyle = isSelected ? 'rgba(99,102,241,0.15)' : 'rgba(200,200,200,0.1)'
+      ctx.fillStyle = isSelected ? 'rgba(255,217,61,0.15)' : 'rgba(200,200,200,0.1)'
       ctx.fillRect(px, baseY - ph, pw, ph)
 
       // Layer stack visualization (simplified)
@@ -124,7 +143,7 @@ export default function ElevationView() {
       }
 
       // Panel border
-      ctx.strokeStyle = isSelected ? '#6366f1' : '#999'
+      ctx.strokeStyle = isSelected ? '#ffd93d' : '#999'
       ctx.lineWidth = isSelected ? 2 : 1
       ctx.strokeRect(px, baseY - ph, pw, ph)
 
@@ -162,20 +181,109 @@ export default function ElevationView() {
     if (toolMode === 'pan') {
       isPanningRef.current = true
       lastPosRef.current = { x: e.clientX, y: e.clientY }
+      return
     }
-  }, [])
+
+    if (toolMode === 'select' && selectedWall) {
+      const canvas = canvasRef.current
+      if (!canvas) return
+      const rect = canvas.getBoundingClientRect()
+      const worldX = (e.clientX - rect.left - viewport.panX) / viewport.zoom
+
+      // Hit test panels
+      const leftX = 100
+      for (const panel of selectedWall.panels) {
+        const panelLeft = leftX + panel.position * viewport.zoom
+        const panelRight = panelLeft + panel.width * viewport.zoom
+        if (worldX >= panelLeft && worldX <= panelRight) {
+          selectPanel(panel.id)
+          // Start panel drag
+          draggingPanelRef.current = {
+            panelId: panel.id,
+            startX: e.clientX,
+            origPosition: panel.position,
+          }
+          return
+        }
+      }
+      // No panel hit — start box selection
+      selectPanel(null)
+      boxSelectRef.current = {
+        startX: e.clientX,
+        startY: e.clientY,
+        mode: e.shiftKey ? 'crossing' : 'window',
+      }
+    }
+  }, [toolMode, selectedWall, viewport, selectPanel])
 
   const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!isPanningRef.current) return
-    const dx = e.clientX - lastPosRef.current.x
-    const dy = e.clientY - lastPosRef.current.y
-    lastPosRef.current = { x: e.clientX, y: e.clientY }
-    setViewport({ panX: viewport.panX + dx, panY: viewport.panY + dy })
-  }, [viewport, setViewport])
+    if (isPanningRef.current) {
+      const dx = e.clientX - lastPosRef.current.x
+      const dy = e.clientY - lastPosRef.current.y
+      lastPosRef.current = { x: e.clientX, y: e.clientY }
+      setViewport({ panX: viewport.panX + dx, panY: viewport.panY + dy })
+      return
+    }
 
-  const handleMouseUp = useCallback(() => {
+    // Panel dragging
+    if (draggingPanelRef.current && selectedWall && selectedWallId) {
+      const dx = e.clientX - draggingPanelRef.current.startX
+      const movementFeet = dx / viewport.zoom
+      const newPosition = Math.max(0, draggingPanelRef.current.origPosition + movementFeet)
+      // Update panel position live in store
+      const store = useFRMXStore.getState()
+      store.updatePanel(selectedWallId, draggingPanelRef.current.panelId, {
+        position: newPosition,
+      })
+    }
+
+    // Box selection rendering (live update of selection box)
+    if (boxSelectRef.current) {
+      lastPosRef.current = { x: e.clientX, y: e.clientY }
+      draw()
+    }
+  }, [viewport, setViewport, selectedWall, selectedWallId, draw])
+
+  const handleMouseUp = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     isPanningRef.current = false
-  }, [])
+
+    if (draggingPanelRef.current) {
+      draggingPanelRef.current = null
+    }
+
+    if (boxSelectRef.current) {
+      // Perform box selection on panels
+      if (selectedWall && selectedWallId) {
+        const canvas = canvasRef.current
+        if (!canvas) return
+        const rect = canvas.getBoundingClientRect()
+        const startX = Math.min(boxSelectRef.current.startX, e.clientX)
+        const endX = Math.max(boxSelectRef.current.startX, e.clientX)
+        const startWorldX = (startX - rect.left - viewport.panX) / viewport.zoom
+        const endWorldX = (endX - rect.left - viewport.panX) / viewport.zoom
+        const leftX = 100
+
+        for (const panel of selectedWall.panels) {
+          const panelLeft = leftX + panel.position * viewport.zoom
+          const panelRight = panelLeft + panel.width * viewport.zoom
+          let selected = false
+          if (boxSelectRef.current!.mode === 'window') {
+            // Window select: panel must be fully inside box
+            selected = panelLeft >= startWorldX && panelRight <= endWorldX
+          } else {
+            // Crossing select: any intersection
+            selected = panelLeft <= endWorldX && panelRight >= startWorldX
+          }
+          if (selected) {
+            selectPanel(panel.id)
+            break
+          }
+        }
+      }
+      boxSelectRef.current = null
+      draw()
+    }
+  }, [selectedWall, selectedWallId, viewport, selectPanel, draw])
 
   const handleWheel = useCallback((e: React.WheelEvent<HTMLCanvasElement>) => {
     e.preventDefault()

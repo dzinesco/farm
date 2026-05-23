@@ -166,20 +166,24 @@ body {
   border-radius: 4px;
   font-size: 12px;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: all 0.15s ease;
   border: 1px solid transparent;
   color: rgba(255,255,255,0.6);
+  background: transparent;
 }
 
 .tool-btn:hover {
   background: rgba(255,255,255,0.08);
   color: white;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.3), 0 0 8px var(--glow-cyan);
+  border-color: rgba(0,212,255,0.2);
 }
 
 .tool-btn.active {
   color: var(--panel-cyan);
   border-color: rgba(0, 212, 255, 0.4);
   background: rgba(0, 212, 255, 0.1);
+  box-shadow: inset 0 1px 3px rgba(0,0,0,0.3), 0 0 12px var(--glow-cyan);
 }
 
 .tool-btn .shortcut {

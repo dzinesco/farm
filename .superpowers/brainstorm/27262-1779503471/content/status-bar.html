@@ -1,0 +1,53 @@
+<h2>Status bar & coordinate display</h2>
+<p class="subtitle">Where does info live, and how is it organized?</p>
+
+<div class="options">
+  <div class="option" data-choice="corner" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Ruler-corner readout only</h3>
+      <p>No bottom status bar. Coordinate info lives in the corner where the rulers meet (like AutoCAD). Tool name and wall count shown in a minimal top-left floating chip. Clean, minimal.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="minimal-bar" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Single-line minimal bar</h3>
+      <p>A single 24px bottom bar. Left: tool name + wall count. Center: active dimension during draw operations (live). Right: zoom level + snap/ortho indicators. Nothing else.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="floating-hud" onclick="toggleSelect(this)">
+    <div class="content">
+      <h3>Floating HUD overlay</h3>
+      <p>No status bar at all. Coordinates show at cursor during operations. Tool name in top-left floating chip. Snap/ortho in top-right floating chip. Everything floats, nothing is static.</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .hud-preview { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 20px; }
+  .mock-viewport { background: #0f0f1a; border-radius: 6px; height: 100px; position: relative; overflow: hidden; }
+  .hud-chip { position: absolute; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-family: monospace; }
+  .coord { bottom: 4px; right: 4px; background: rgba(0,212,255,0.2); color: #00d4ff; border: 1px solid #00d4ff40; }
+  .tool-hud { top: 4px; left: 4px; background: rgba(0,212,255,0.15); color: #00d4ff; border: 1px solid #00d4ff30; }
+  .snap-hud { top: 4px; right: 4px; background: rgba(255,107,157,0.15); color: #ff6b9d; border: 1px solid #ff6b9d30; }
+  .dim-hud { bottom: 4px; left: 4px; background: rgba(255,217,61,0.15); color: #ffd93d; border: 1px solid #ffd93d40; }
+</style>
+
+<div style="margin-top:24px">
+  <p class="label" style="color:#888;font-size:11px;margin-bottom:12px">APPROACH C PREVIEW (floating HUD)</p>
+  <div class="hud-preview">
+    <div class="mock-viewport">
+      <div class="hud-chip tool-hud">Select</div>
+      <div class="hud-chip snap-hud">SNAP ORTHO</div>
+      <div class="hud-chip dim-hud">10'-6 3/4"</div>
+      <div class="hud-chip coord">X: 24' Y: 18'</div>
+    </div>
+    <div style="font-size:11px;color:#666;font-family:monospace;padding-top:20px">
+      Cyan=tool state<br>
+      Pink=snap mode<br>
+      Yellow=live dimension<br>
+      Magenta=coordinates
+    </div>
+  </div>
+</div>

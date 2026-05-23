@@ -171,7 +171,7 @@ The HUD chips (tool, snap, dimension, coordinates) also appear in 3D view since 
 
 ---
 
-## 10. Out of Scope
+## 11. Out of Scope
 
 - Command palette (`Cmd+K`) — not included per design choice
 - Panel resizing — panels have fixed widths, user only repositions them

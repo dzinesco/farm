@@ -1,0 +1,57 @@
+<h2>Elevation view interaction model</h2>
+<p class="subtitle">Click panels in elevation view to...</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Fully interactive</h3>
+      <p>Click panel → selected (cyan outline). Drag to move. Double-click stud → edit position. Direct manipulation like Figma — plan and elevation both as editors.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Read-only visualization</h3>
+      <p>Elevation shows layer stack and framing as a diagram. Clicking selects the whole wall. Editing happens only in plan view and 3D inspector. Like reading a drawing, not editing it.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Click → inspect popover</h3>
+      <p>Click panel → small popover with name, dimensions, layer list. Drag not supported. For details-on-demand rather than direct editing. Edits via right-click properties panel.</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .elev-mock { background: #0f0f1a; border-radius: 6px; height: 80px; margin-top: 16px; display: flex; align-items: center; justify-content: center; font-size: 11px; color: #666; position: relative; }
+  .panel { height: 60px; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 10px; }
+  .p1 { width: 80px; background: #1a2a3a; border: 1px solid #00d4ff40; color: #00d4ff; }
+  .p2 { width: 60px; background: #1a2a3a; border: 1px solid #ffd93d40; color: #ffd93d; margin-left: 4px; }
+  .p3 { width: 100px; background: #1a2a3a; border: 1px solid #ff6b9d40; color: #ff6b9d; margin-left: 4px; }
+  .selection-outline { position: absolute; top: 8px; left: 8px; right: 120px; height: 64px; border: 2px solid #00d4ff; border-radius: 4px; pointer-events: none; }
+  .popover { position: absolute; top: 8px; right: 8px; width: 100px; background: #1a1a2e; border: 1px solid #ff6b9d; border-radius: 4px; padding: 6px; font-size: 9px; color: #c77dff; }
+</style>
+
+<div style="margin-top:24px">
+  <p class="label" style="color:#888;font-size:11px;margin-bottom:12px">A: DIRECT MANIPULATION</p>
+  <div class="elev-mock">
+    <div class="panel p1">Panel A</div>
+    <div class="panel p2">Panel B</div>
+    <div class="panel p3">Panel C</div>
+    <div style="position:absolute;top:0;left:0;width:88px;height:80px;border:2px solid #00d4ff;border-radius:4px;box-shadow:0 0 8px #00d4ff40"></div>
+    <div style="position:absolute;bottom:4px;right:4px;font-size:9px;color:#00d4ff;font-family:monospace">drag to move →</div>
+  </div>
+</div>
+
+<div style="margin-top:16px">
+  <p class="label" style="color:#888;font-size:11px;margin-bottom:12px">C: INSPECT POPOVER</p>
+  <div class="elev-mock">
+    <div class="panel p1">Panel A</div>
+    <div class="panel p2">Panel B</div>
+    <div class="panel p3">Panel C</div>
+    <div style="position:absolute;top:4px;right:4px;background:#1a1a2e;border:1px solid #c77dff;border-radius:4px;padding:6px 8px;font-size:9px;color:#c77dff;font-family:monospace">Panel C<br>8'-0" × 9'-1"<br>2x6 Ext</div>
+  </div>
+</div>

@@ -1,0 +1,45 @@
+<h2>Multi-accent palette — interesting</h2>
+<p class="subtitle">Dark + cyan/pink/yellow/magenta accents</p>
+
+<div class="options">
+  <div class="option" data-choice="category" onclick="toggleSelect(this)">
+    <div class="letter">1</div>
+    <div class="content">
+      <h3>Color-coded by category</h3>
+      <p>Each tool category gets a color. Select=cyan, Draw=pink, Pan=yellow, Edit=magenta. View modes get their own colors. Makes the UI immediately scannable — you know "pink = drawing tools".</p>
+    </div>
+  </div>
+  <div class="option" data-choice="panel" onclick="toggleSelect(this)">
+    <div class="letter">2</div>
+    <div class="content">
+      <h3>Color-coded by panel type</h3>
+      <p>Tools panel=cyan, Layers panel=pink, Properties panel=magenta, Snap/Grid=yellow. Each panel has its own accent so you instantly know which panel you're looking at.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="state" onclick="toggleSelect(this)">
+    <div class="letter">3</div>
+    <div class="content">
+      <h3>Color-coded by state</h3>
+      <p>Colors mark interactive states — active=cyan, hover=pink, selected=yellow, warning=magenta. More subtle, feels "alive" rather than categorically loud.</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .mock-panels { display: flex; gap: 12px; margin-top: 20px; justify-content: center; }
+  .mock-panel { width: 80px; padding: 10px; border-radius: 6px; font-size: 10px; text-align: center; }
+  .panel-cyan { background: #0d0d0d; border: 1px solid #00d4ff; color: #00d4ff; }
+  .panel-pink { background: #0d0d0d; border: 1px solid #ff6b9d; color: #ff6b9d; }
+  .panel-yellow { background: #0d0d0d; border: 1px solid #ffd93d; color: #ffd93d; }
+  .panel-magenta { background: #0d0d0d; border: 1px solid #c77dff; color: #c77dff; }
+</style>
+
+<div style="margin-top:24px;text-align:center">
+  <p class="label" style="color:#888;font-size:11px;margin-bottom:12px">APPROACH 2 PREVIEW (panel coloring)</p>
+  <div class="mock-panels">
+    <div class="mock-panel panel-cyan">TOOLS</div>
+    <div class="mock-panel panel-pink">LAYERS</div>
+    <div class="mock-panel panel-magenta">PROPS</div>
+    <div class="mock-panel panel-yellow">SNAP</div>
+  </div>
+</div>

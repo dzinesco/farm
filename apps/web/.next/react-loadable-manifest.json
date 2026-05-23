@@ -1,0 +1,25 @@
+{
+  "../../../node_modules/.pnpm/@react-three+drei@9.122.0_@react-three+fiber@8.15.0_@types+react@19.2.15_react-dom@18.3.1_rea_qiuvmy73gmnwydfvltksynjoci/node_modules/@react-three/drei/core/VideoTexture.js -> hls.js": {
+    "id": null,
+    "files": []
+  },
+  "../../../node_modules/.pnpm/@react-three+drei@9.122.0_@react-three+fiber@8.15.0_@types+react@19.2.15_react-dom@18.3.1_rea_qiuvmy73gmnwydfvltksynjoci/node_modules/@react-three/drei/web/FaceLandmarker.js -> @mediapipe/tasks-vision": {
+    "id": null,
+    "files": []
+  },
+  "components/ThreeDView.tsx -> @/features/three/components/Scene": {
+    "id": 4248,
+    "files": [
+      "static/chunks/248.36163a17b2cc954b.js"
+    ]
+  },
+  "features/three/components/Scene.tsx -> ./Scene3D": {
+    "id": 2662,
+    "files": [
+      "static/chunks/0fd4459a.1838b1b028436d4a.js",
+      "static/chunks/622eaf3d.bc7f207bada709d2.js",
+      "static/chunks/4.4f60ecce38573e7e.js",
+      "static/chunks/662.60907620d046ccea.js"
+    ]
+  }
+}

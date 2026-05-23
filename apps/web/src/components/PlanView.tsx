@@ -489,30 +489,6 @@ export default function PlanView() {
       <div className="absolute bottom-4 right-4 bg-white border border-gray-300 rounded px-3 py-1.5 text-xs text-gray-600">
         {Math.round(viewport.zoom * 100)}%
       </div>
-
-      {/* Coordinates display */}
-      <div className="absolute top-4 left-4 bg-white border border-gray-300 rounded px-3 py-1.5 text-xs font-mono text-gray-600">
-        pan: {Math.round(viewport.panX)}, {Math.round(viewport.panY)} | {snapEnabled ? 'SNAP' : ''} {orthoEnabled ? 'ORTHO' : ''}
-      </div>
-
-      {/* Status bar */}
-      <div className="absolute bottom-0 left-0 right-0 h-6 bg-neutral-900 text-white text-xs flex items-center px-4 gap-6 pointer-events-none z-10">
-        <span className="text-neutral-400">
-          Tool: <span className="text-white font-medium">{toolMode.replace('-', ' ')}</span>
-        </span>
-        <span className="text-neutral-400">
-          Walls: <span className="text-white font-medium">{wallCount}</span>
-        </span>
-        {selectedWall && (
-          <span className="text-neutral-400">
-            Active: <span className="text-blue-400 font-medium">{selectedWall.name}</span>
-            {' '}({selectedWall.wallType ?? 'exterior'}, {formatDim(calculateWallLengthInches(selectedWall))})
-          </span>
-        )}
-        <span className="text-neutral-500 ml-auto">
-          pan: {Math.round(viewport.panX)},{Math.round(viewport.panY)} | zoom: {Math.round(viewport.zoom * 100)}%
-        </span>
-      </div>
     </div>
   )
 }

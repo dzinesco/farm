@@ -1,0 +1,79 @@
+<h2>Overall layout direction</h2>
+<p class="subtitle">How should the main editor chrome feel?</p>
+
+<div class="options">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>Dense CAD Bar</h3>
+      <p>Horizontal top toolbar, everything visible. All tools in your face, information-dense. Like AutoCAD or SketchUp.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>Minimal Dark Bar</h3>
+      <p>Top toolbar shows only what's relevant per active tool. Clean, dark, lots of breathing room in the canvas. Like Figma or Linear.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>Floating Toolbar</h3>
+      <p>No horizontal bar. Tools float as a compact pill top-left, properties slide in from right, full canvas priority. Like some game editors.</p>
+    </div>
+  </div>
+</div>
+
+<style>
+  .mock-layout { margin-top: 20px; padding: 16px; background: #1a1a2e; border-radius: 8px; font-family: system-ui; color: #e0e0e0; }
+  .mock-toolbar { display: flex; gap: 4px; padding: 8px; background: #2d2d44; border-radius: 4px; margin-bottom: 8px; }
+  .mock-tool-btn { padding: 4px 8px; background: #3d3d5c; border-radius: 3px; font-size: 11px; }
+  .mock-tool-btn.active { background: #6c63ff; }
+  .mock-canvas { height: 120px; background: #0f0f1a; border-radius: 4px; display: flex; align-items: center; justify-content: center; color: #666; font-size: 12px; }
+</style>
+
+<div style="margin-top:24px">
+  <p class="label" style="color:#888;font-size:11px;margin-bottom:12px">QUICK PREVIEW</p>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px">
+    <div>
+      <p style="font-size:11px;color:#6c63ff;margin-bottom:8px;text-align:center">A: Dense CAD Bar</p>
+      <div class="mock-layout">
+        <div class="mock-toolbar">
+          <div class="mock-tool-btn active">V</div><div class="mock-tool-btn">H</div><div class="mock-tool-btn">W</div><div class="mock-tool-btn">O</div>
+          <div style="width:1px;background:#555;margin:0 4px"></div>
+          <div class="mock-tool-btn">Plan</div><div class="mock-tool-btn">Elev</div><div class="mock-tool-btn">3D</div>
+          <div style="width:1px;background:#555;margin:0 4px"></div>
+          <div class="mock-tool-btn">Ext</div><div class="mock-tool-btn">Int</div>
+        </div>
+        <div class="mock-canvas">Canvas area</div>
+      </div>
+    </div>
+    <div>
+      <p style="font-size:11px;color:#6c63ff;margin-bottom:8px;text-align:center">B: Minimal Dark Bar</p>
+      <div class="mock-layout">
+        <div class="mock-toolbar" style="justify-content:center">
+          <div class="mock-tool-btn active">Select</div>
+          <div class="mock-tool-btn">Pan</div>
+          <div style="width:1px;background:#555;margin:0 8px"></div>
+          <div class="mock-tool-btn">Plan</div><div class="mock-tool-btn">3D</div>
+        </div>
+        <div class="mock-canvas">Canvas area</div>
+      </div>
+    </div>
+    <div>
+      <p style="font-size:11px;color:#6c63ff;margin-bottom:8px;text-align:center">C: Floating Toolbar</p>
+      <div class="mock-layout">
+        <div style="position:relative;height:152px">
+          <div style="position:absolute;top:8px;left:8px;display:flex;gap:4px">
+            <div class="mock-tool-btn active">V</div>
+            <div class="mock-tool-btn">H</div>
+            <div class="mock-tool-btn">W</div>
+          </div>
+          <div style="position:absolute;top:8px;right:8px;width:40px;height:80px;background:#2d2d44;border-radius:4px;font-size:10px;color:#666;text-align:center;padding-top:8px">Props</div>
+          <div class="mock-canvas" style="height:120px;margin:16px 8px 8px">Canvas</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

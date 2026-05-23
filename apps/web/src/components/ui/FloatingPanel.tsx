@@ -1,6 +1,6 @@
 'use client'
 
-import { useRef, useState, useCallback, ReactNode } from 'react'
+import { useRef, useState, useCallback, useEffect, ReactNode } from 'react'
 
 interface FloatingPanelProps {
   title: string
@@ -24,6 +24,7 @@ export default function FloatingPanel({
   const [pos, setPos] = useState({ x: defaultX, y: defaultY })
   const [isDragging, setIsDragging] = useState(false)
   const dragRef = useRef<{ startX: number; startY: number; origX: number; origY: number } | null>(null)
+  const activeDragRef = useRef<{ onMouseMove: (e: MouseEvent) => void; onMouseUp: () => void } | null>(null)
 
   const onMouseDown = useCallback((e: React.MouseEvent) => {
     if ((e.target as HTMLElement).closest('.close-btn')) return
@@ -47,12 +48,24 @@ export default function FloatingPanel({
     const onMouseUp = () => {
       setIsDragging(false)
       dragRef.current = null
+      activeDragRef.current = null
       window.removeEventListener('mousemove', onMouseMove)
       window.removeEventListener('mouseup', onMouseUp)
     }
+    activeDragRef.current = { onMouseMove, onMouseUp }
     window.addEventListener('mousemove', onMouseMove)
     window.addEventListener('mouseup', onMouseUp)
-  }, [pos])
+  }, [])
+
+  useEffect(() => {
+    return () => {
+      if (activeDragRef.current) {
+        window.removeEventListener('mousemove', activeDragRef.current.onMouseMove)
+        window.removeEventListener('mouseup', activeDragRef.current.onMouseUp)
+        activeDragRef.current = null
+      }
+    }
+  }, [])
 
   return (
     <div

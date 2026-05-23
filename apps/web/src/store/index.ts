@@ -101,6 +101,20 @@ export interface ProjectState {
   historyIndex: number
   snapEnabled: boolean
   orthoEnabled: boolean
+
+  // Panel visibility
+  panelsVisible: {
+    tools: boolean
+    view: boolean
+    settings: boolean
+    history: boolean
+  }
+
+  // HUD visibility
+  showShortcutLegend: boolean
+
+  // Space-to-pan
+  previousToolMode: ToolMode | null
 }
 
 // ─── Store ───────────────────────────────────────────────────────────
@@ -125,6 +139,20 @@ interface FRMXStore {
   // Snapping
   snapEnabled: boolean
   orthoEnabled: boolean
+
+  // Panel visibility
+  panelsVisible: {
+    tools: boolean
+    view: boolean
+    settings: boolean
+    history: boolean
+  }
+
+  // HUD visibility
+  showShortcutLegend: boolean
+
+  // Space-to-pan
+  previousToolMode: ToolMode | null
 
   // Actions
   setProject: (project: Project) => void
@@ -169,6 +197,16 @@ interface FRMXStore {
   toggleOrtho: () => void
   setSnapEnabled: (v: boolean) => void
   setOrthoEnabled: (v: boolean) => void
+
+  // Panel visibility
+  setPanelVisible: (panel: keyof FRMXStore['panelsVisible'], v: boolean) => void
+  togglePanelVisible: (panel: keyof FRMXStore['panelsVisible']) => void
+
+  // Shortcut legend
+  setShowShortcutLegend: (v: boolean) => void
+
+  // Space-to-pan
+  setPreviousToolMode: (mode: ToolMode | null) => void
 }
 
 // ─── Default project factory ─────────────────────────────────────────
@@ -219,6 +257,16 @@ export const useFRMXStore = create<FRMXStore>((set, get) => ({
 
   snapEnabled: true,
   orthoEnabled: false,
+
+  panelsVisible: {
+    tools: true,
+    view: true,
+    settings: false,
+    history: false,
+  },
+
+  showShortcutLegend: false,
+  previousToolMode: null,
 
   setProject: (project) => set({ project }),
 
@@ -438,6 +486,15 @@ export const useFRMXStore = create<FRMXStore>((set, get) => ({
   setSnapEnabled: (v) => set({ snapEnabled: v }),
   setOrthoEnabled: (v) => set({ orthoEnabled: v }),
 
+  setPanelVisible: (panel, v) => set(state => ({
+    panelsVisible: { ...state.panelsVisible, [panel]: v }
+  })),
+  togglePanelVisible: (panel) => set(state => ({
+    panelsVisible: { ...state.panelsVisible, [panel]: !state.panelsVisible[panel] }
+  })),
+  setShowShortcutLegend: (v) => set({ showShortcutLegend: v }),
+  setPreviousToolMode: (mode) => set({ previousToolMode: mode }),
+
   reset: () => {
     set({
       project: createEmptyProject(),
@@ -450,6 +507,14 @@ export const useFRMXStore = create<FRMXStore>((set, get) => ({
       historyIndex: -1,
       snapEnabled: true,
       orthoEnabled: false,
+      panelsVisible: {
+        tools: true,
+        view: true,
+        settings: false,
+        history: false,
+      },
+      showShortcutLegend: false,
+      previousToolMode: null,
     })
   },
 }))

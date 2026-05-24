@@ -3,6 +3,7 @@
 import { useFRMXStore } from '@/store'
 import DimensionInput from './DimensionInput'
 import { formatDim } from '@frmx/calculator'
+import { LayerEditor } from './LayerEditor'
 
 export default function PropertiesPanel() {
   const { project, selectedWallId, selectedPanelId, updateWall, updatePanel } = useFRMXStore()
@@ -96,25 +97,11 @@ export default function PropertiesPanel() {
             {/* Layer stack */}
             <div className="mt-3">
               <h5 className="text-xs font-medium text-gray-600 mb-1">Layer Stack</h5>
-              <div className="space-y-0.5">
-                {selectedPanel.layerStack.map((layer, i) => (
-                  <div key={layer.id} className="flex items-center gap-1 text-xs py-0.5 px-1 bg-white rounded border border-gray-200">
-                    <span
-                      className="w-2 h-2 rounded-full flex-shrink-0"
-                      style={{
-                        backgroundColor:
-                          layer.role === 'sheathing' ? '#c4b5a0' :
-                          layer.role === 'cladding' ? '#8b7355' :
-                          layer.role === 'insulation' ? '#fde68a' :
-                          layer.role === 'vapor-barrier' ? '#93c5fd' :
-                          layer.role === 'drywall' ? '#ffffff' : '#ddd'
-                      }}
-                    />
-                    <span className="flex-1 truncate text-gray-700">{layer.name}</span>
-                    <span className="text-gray-400 text-[10px]">{formatDim(layer.thickness)}</span>
-                  </div>
-                ))}
-              </div>
+              <LayerEditor
+                wallId={selectedWall.id}
+                panelId={selectedPanel.id}
+                layers={selectedPanel.layerStack}
+              />
             </div>
 
             {/* Framing summary */}

@@ -11,11 +11,6 @@ import { getPresetById } from '@frmx/layers'
 
 export interface Point2D { x: number; y: number }
 
-export interface Layer {
-  id: string; name: string; thickness: number
-  materialRef: string; role: string
-}
-
 export interface Stud {
   id: string; position: number; type: 'full' | 'jack' | 'king' | 'cripple'
   height: number

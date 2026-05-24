@@ -197,7 +197,7 @@ export interface Layer {
   name: string
   thickness: Length
   materialRef: string // ID into MaterialsCatalog
-  role: 'sheathing' | 'cladding' | 'insulation' | 'air-gap' | 'vapor-barrier' | 'drywall' | 'other'
+  role: 'sheathing' | 'cladding' | 'insulation' | 'air-gap' | 'vapor-barrier' | 'drywall' | 'core' | 'other'
 }
 
 export interface FramingModel {

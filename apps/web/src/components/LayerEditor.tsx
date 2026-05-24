@@ -129,10 +129,20 @@ export function LayerEditor({ wallId, panelId, layers }: LayerEditorProps) {
   }
 
   function handleRemoveLayer(layerId: string) {
-    updatePanelLayers(wallId, panelId, layers.filter(l => l.id !== layerId) as Layer[])
+    if (window.confirm('Remove this layer?')) {
+      updatePanelLayers(wallId, panelId, layers.filter(l => l.id !== layerId) as Layer[])
+    }
   }
 
   const presets = [DEFAULT_EXTERIOR_2X6, DEFAULT_INTERIOR_PARTITION]
+
+  function applyPreset(preset: typeof presets[number]) {
+    const hasCustomLayers = layers.length > 0
+    if (hasCustomLayers && !window.confirm(`Apply "${preset.name}" preset? This will replace all current layers.`)) {
+      return
+    }
+    applyPresetToPanel(wallId, panelId, preset.id)
+  }
 
   return (
     <div className="space-y-2">
@@ -141,7 +151,7 @@ export function LayerEditor({ wallId, panelId, layers }: LayerEditorProps) {
         {presets.map(preset => (
           <button
             key={preset.id}
-            onClick={() => applyPresetToPanel(wallId, panelId, preset.id)}
+            onClick={() => applyPreset(preset)}
             className="text-[10px] px-2 py-0.5 rounded border border-gray-300 bg-white hover:bg-gray-50 text-gray-600 transition-colors"
             title={preset.description}
           >

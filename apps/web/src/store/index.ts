@@ -4,6 +4,8 @@
  */
 import { create } from 'zustand'
 import { nanoid } from 'nanoid'
+import type { Layer } from '@frmx/core'
+import { getPresetById } from '@frmx/layers'
 
 // ─── Core project types ──────────────────────────────────────────────
 
@@ -182,6 +184,8 @@ interface FRMXStore {
   addPanel: (wallId: string, panel: Panel) => void
   updatePanel: (wallId: string, panelId: string, updates: Partial<Panel>) => void
   removePanel: (wallId: string, panelId: string) => void
+  updatePanelLayers: (wallId: string, panelId: string, layers: Layer[], presetName?: string) => void
+  applyPresetToPanel: (wallId: string, panelId: string, presetId: string) => void
 
   // Opening operations
   addOpening: (wallId: string, opening: Opening) => void
@@ -395,6 +399,39 @@ export const useFRMXStore = create<FRMXStore>((set, get) => ({
     }))
     const next = get().project
     get().pushHistory(`Remove panel`, next, prev)
+  },
+
+  updatePanelLayers: (wallId, panelId, layers, presetName) => {
+    const prev = get().project
+    get().updateProject(p => ({
+      ...p,
+      building: {
+        ...p.building,
+        levels: p.building.levels.map(lvl => ({
+          ...lvl,
+          walls: lvl.walls.map(w =>
+            w.id === wallId
+              ? { ...w, panels: w.panels.map(pan => pan.id === panelId ? { ...pan, layerStack: layers } : pan) }
+              : w
+          ),
+        })),
+      },
+    }))
+    const next = get().project
+    get().pushHistory(`Update panel layers${presetName ? ` (${presetName})` : ''}`, next, prev)
+  },
+
+  applyPresetToPanel: (wallId, panelId, presetId) => {
+    const preset = getPresetById(presetId)
+    if (!preset) return
+    const newLayers: Layer[] = preset.layers.map((pl, i) => ({
+      id: `layer-${Date.now()}-${i}`,
+      name: pl.name,
+      thickness: pl.thickness,
+      materialRef: pl.material,
+      role: pl.role,
+    }))
+    get().updatePanelLayers(wallId, panelId, newLayers, preset.name)
   },
 
   addOpening: (wallId, opening) => {

@@ -483,7 +483,7 @@ export default function App() {
           </div>
         )}
 
-        <div style={{ flex: 1 }} />
+        <div className="toolbar-spacer" />
 
         {/* Undo/Redo */}
         <div className="toolbar-group">
@@ -529,7 +529,7 @@ export default function App() {
               ))
             ))}
             {project.building.levels.reduce((s, l) => s + l.walls.length, 0) === 0 && (
-              <div className="sidebar-item" style={{ color: 'var(--color-text-muted)' }}>
+              <div className="sidebar-item sidebar-item-empty">
                 No walls yet
               </div>
             )}
@@ -555,7 +555,7 @@ export default function App() {
         </div>
 
         {/* Canvas area */}
-        <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+        <div className="canvas-area">
           {viewMode === 'plan' && (
             <PlanView
               wallWidth={wallWidthInches}

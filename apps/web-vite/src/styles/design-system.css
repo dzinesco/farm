@@ -438,6 +438,20 @@ html, body, #root {
   color: var(--color-text-muted);
 }
 
+.toolbar-spacer { flex: 1; }
+
+.sidebar-item-empty {
+  color: var(--color-text-muted);
+  font-size: 13px;
+  padding: var(--spacing-sm);
+}
+
+.canvas-area {
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+}
+
 /* Cursor styles */
 .cursor-crosshair { cursor: crosshair; }
 .cursor-grab { cursor: grab; }

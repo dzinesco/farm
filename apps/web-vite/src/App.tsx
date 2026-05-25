@@ -335,7 +335,10 @@ function PlanView({ wallWidth, originPoint, arrowAngle, inputLength, onSetOrigin
     })
   }, [viewport, setViewport])
 
-  const cursorClass = toolMode === 'draw-wall' ? 'cursor-crosshair' : toolMode === 'pan' ? 'cursor-grab' : ''
+  const cursorClass =
+    toolMode === 'select' ? 'cursor-default' :
+    toolMode === 'pan' ? 'cursor-grab' :
+    toolMode === 'draw-wall' || toolMode === 'add-opening' || toolMode === 'edit-panel' ? 'cursor-crosshair' : ''
 
   return (
     <div className="canvas-container">

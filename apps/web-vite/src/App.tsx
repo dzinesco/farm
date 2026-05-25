@@ -367,6 +367,21 @@ export default function App() {
   const [arrowAngle, setArrowAngle] = useState(0)
   const [inputLength, setInputLength] = useState('')
 
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.ctrlKey || e.metaKey) && e.key === 'z' && !e.shiftKey) {
+        e.preventDefault()
+        useFRMXStore.getState().undo()
+      }
+      if ((e.ctrlKey || e.metaKey) && (e.key === 'y' || (e.key === 'z' && e.shiftKey))) {
+        e.preventDefault()
+        useFRMXStore.getState().redo()
+      }
+    }
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [])
+
   const VIEW_MODES: { mode: ViewMode; label: string; icon: string }[] = [
     { mode: 'plan', label: 'Plan', icon: '▣' },
     { mode: 'elevation', label: 'Elevation', icon: '▤' },

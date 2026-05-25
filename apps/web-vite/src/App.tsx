@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, useCallback } from 'react'
 import { nanoid } from 'nanoid'
 import { useFRMXStore } from './store'
+import './styles/design-system.css'
 
 type ViewMode = 'plan' | 'elevation' | '3d'
 type ToolMode = 'select' | 'pan' | 'draw-wall' | 'add-opening' | 'edit-panel'
@@ -27,7 +28,6 @@ function PlanView({ wallWidth, originPoint, arrowAngle, inputLength, onSetOrigin
   const lastPosRef = useRef({ x: 0, y: 0 })
   const drawingPointsRef = useRef<{ x: number; y: number }[]>([])
 
-  // Offset a point perpendicular to a segment by `dist` feet
   function offsetPoint(px: number, py: number, dx: number, dy: number, dist: number) {
     const len = Math.hypot(dx, dy) || 1
     return { x: px - (dy / len) * dist, y: py + (dx / len) * dist }
@@ -42,11 +42,11 @@ function PlanView({ wallWidth, originPoint, arrowAngle, inputLength, onSetOrigin
     const { panX, panY, zoom } = viewport
 
     ctx.clearRect(0, 0, width, height)
-    ctx.fillStyle = '#fafafa'
+    ctx.fillStyle = '#1a1a2e'
     ctx.fillRect(0, 0, width, height)
 
     // Grid
-    ctx.strokeStyle = '#e5e5e5'
+    ctx.strokeStyle = '#252545'
     ctx.lineWidth = 0.5
     const gridSpacing = GRID_SIZE * zoom
     const startX = panX % gridSpacing
@@ -59,7 +59,7 @@ function PlanView({ wallWidth, originPoint, arrowAngle, inputLength, onSetOrigin
     }
 
     // Foot markers
-    ctx.fillStyle = '#999'
+    ctx.fillStyle = '#666688'
     ctx.font = '9px monospace'
     for (let x = startX; x < width; x += gridSpacing * 12) {
       const foot = Math.round((x - panX) / gridSpacing)
@@ -68,13 +68,12 @@ function PlanView({ wallWidth, originPoint, arrowAngle, inputLength, onSetOrigin
 
     const wFt = wallWidth / 12
 
-    // Walls — double-line parallel representation
+    // Walls — double-line representation
     for (const level of project.building.levels) {
       for (const wall of level.walls) {
         if (wall.centerline.length < 2) continue
         const isSelected = wall.id === selectedWallId
 
-        // Draw two parallel offset lines (double-wall)
         for (const side of [-1, 1]) {
           const off = (wFt / 2) * side
           ctx.beginPath()
@@ -88,7 +87,7 @@ function PlanView({ wallWidth, originPoint, arrowAngle, inputLength, onSetOrigin
             if (!started) { ctx.moveTo(sx, sy); started = true }
             else ctx.lineTo(sx, sy)
           }
-          ctx.strokeStyle = isSelected ? '#2563eb' : '#888'
+          ctx.strokeStyle = isSelected ? '#4f8fff' : '#6b7280'
           ctx.lineWidth = isSelected ? 2 : 1.5
           ctx.stroke()
         }
@@ -105,7 +104,7 @@ function PlanView({ wallWidth, originPoint, arrowAngle, inputLength, onSetOrigin
         ctx.beginPath()
         ctx.moveTo(o1n.x * zoom + panX, o1n.y * zoom + panY)
         ctx.lineTo(o1p.x * zoom + panX, o1p.y * zoom + panY)
-        ctx.strokeStyle = isSelected ? '#2563eb' : '#888'
+        ctx.strokeStyle = isSelected ? '#4f8fff' : '#6b7280'
         ctx.lineWidth = 1.5
         ctx.stroke()
         ctx.beginPath()
@@ -118,11 +117,11 @@ function PlanView({ wallWidth, originPoint, arrowAngle, inputLength, onSetOrigin
         const mid = wall.centerline[midIdx]
         const dx = p2.x - p1.x, dy = p2.y - p1.y
         const lenFt = Math.sqrt(dx * dx + dy * dy)
-        ctx.fillStyle = '#333'
+        ctx.fillStyle = '#e8e8f0'
         ctx.font = 'bold 11px system-ui'
         ctx.fillText(wall.name, mid.x * zoom + panX + 4, mid.y * zoom + panY - 4)
         ctx.font = '9px monospace'
-        ctx.fillStyle = '#666'
+        ctx.fillStyle = '#8888aa'
         ctx.fillText(`${Math.round(lenFt * 12)}"`, mid.x * zoom + panX + 4, mid.y * zoom + panY + 10)
       }
     }
@@ -130,16 +129,15 @@ function PlanView({ wallWidth, originPoint, arrowAngle, inputLength, onSetOrigin
     // In-progress wall preview
     if (toolModeRef.current === 'draw-wall' && isDrawingRef.current && drawingPointsRef.current.length > 0) {
       const pts = drawingPointsRef.current
-      // Draw centerline dashed
       ctx.beginPath()
       ctx.moveTo(pts[0].x * zoom + panX, pts[0].y * zoom + panY)
       for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x * zoom + panX, pts[i].y * zoom + panY)
-      ctx.strokeStyle = '#2563eb'
+      ctx.strokeStyle = '#4f8fff'
       ctx.lineWidth = 2
       ctx.setLineDash([6, 4])
       ctx.stroke()
       ctx.setLineDash([])
-      // Draw double-wall preview
+
       for (const side of [-1, 1]) {
         const off = (wFt / 2) * side
         ctx.beginPath()
@@ -157,15 +155,14 @@ function PlanView({ wallWidth, originPoint, arrowAngle, inputLength, onSetOrigin
         ctx.stroke()
         ctx.setLineDash([])
       }
-      // Endpoint handle
       const last = pts[pts.length - 1]
-      ctx.fillStyle = '#2563eb'
+      ctx.fillStyle = '#4f8fff'
       ctx.beginPath()
       ctx.arc(last.x * zoom + panX, last.y * zoom + panY, 6, 0, Math.PI * 2)
       ctx.fill()
     }
 
-    // ─── Draw-wall: origin + direction UI ───────────────────────────────
+    // Draw-wall: origin + direction UI
     if (toolModeRef.current === 'draw-wall' && originPoint && inputLength) {
       const lenFt = parseFloat(inputLength)
       if (!isNaN(lenFt) && lenFt > 0) {
@@ -173,18 +170,15 @@ function PlanView({ wallWidth, originPoint, arrowAngle, inputLength, onSetOrigin
         const endX = originPoint.x + Math.cos(rad) * lenFt
         const endY = originPoint.y + Math.sin(rad) * lenFt
 
-        // Draw guide dashes
         ctx.setLineDash([6, 4])
         ctx.strokeStyle = '#60a5fa'
         ctx.lineWidth = 1.5
 
-        // Guide from origin to end
         ctx.beginPath()
         ctx.moveTo(originPoint.x * zoom + panX, originPoint.y * zoom + panY)
         ctx.lineTo(endX * zoom + panX, endY * zoom + panY)
         ctx.stroke()
 
-        // Perpendicular width guides at start and end
         const px = -(endY - originPoint.y) / (lenFt || 1) * (wFt / 2)
         const py = (endX - originPoint.x) / (lenFt || 1) * (wFt / 2)
         ctx.beginPath()
@@ -197,33 +191,28 @@ function PlanView({ wallWidth, originPoint, arrowAngle, inputLength, onSetOrigin
         ctx.stroke()
         ctx.setLineDash([])
 
-        // Origin crosshair
-        ctx.strokeStyle = '#2563eb'
+        ctx.strokeStyle = '#4f8fff'
         ctx.lineWidth = 2
         const ox = originPoint.x * zoom + panX, oy = originPoint.y * zoom + panY
         ctx.beginPath(); ctx.moveTo(ox - 8, oy); ctx.lineTo(ox + 8, oy); ctx.stroke()
         ctx.beginPath(); ctx.moveTo(ox, oy - 8); ctx.lineTo(ox, oy + 8); ctx.stroke()
 
-        // End point
-        ctx.fillStyle = '#2563eb'
+        ctx.fillStyle = '#4f8fff'
         ctx.beginPath()
         ctx.arc(endX * zoom + panX, endY * zoom + panY, 5, 0, Math.PI * 2)
         ctx.fill()
 
-        // Length label
-        ctx.fillStyle = '#333'
+        ctx.fillStyle = '#e8e8f0'
         ctx.font = 'bold 11px monospace'
         ctx.fillText(`${lenFt}'`, (originPoint.x + (endX - originPoint.x) / 2) * zoom + panX - 8, (originPoint.y + (endY - originPoint.y) / 2) * zoom + panY - 8)
       }
     } else if (toolModeRef.current === 'draw-wall' && originPoint) {
-      // Origin crosshair only
-      ctx.strokeStyle = '#2563eb'
+      ctx.strokeStyle = '#4f8fff'
       ctx.lineWidth = 2
       const ox = originPoint.x * zoom + panX, oy = originPoint.y * zoom + panY
       ctx.beginPath(); ctx.moveTo(ox - 8, oy); ctx.lineTo(ox + 8, oy); ctx.stroke()
       ctx.beginPath(); ctx.moveTo(ox, oy - 8); ctx.lineTo(ox, oy + 8); ctx.stroke()
 
-      // Draw arrow indicator from origin in current direction
       const rad = (arrowAngle * Math.PI) / 180
       const arrowLen = 40
       ctx.strokeStyle = '#60a5fa'
@@ -256,7 +245,6 @@ function PlanView({ wallWidth, originPoint, arrowAngle, inputLength, onSetOrigin
   }, [])
 
   const handleMouseDown = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
-    console.log('[PlanView] mousedown', toolModeRef.current)
     setClickCount(c => c + 1)
     isPanningRef.current = false
     const canvas = canvasRef.current
@@ -269,7 +257,6 @@ function PlanView({ wallWidth, originPoint, arrowAngle, inputLength, onSetOrigin
       isPanningRef.current = true
       lastPosRef.current = { x: e.clientX, y: e.clientY }
     } else if (toolModeRef.current === 'draw-wall') {
-      // Click sets origin; length+direction determine endpoint
       onSetOrigin({ x: worldX, y: worldY })
       isDrawingRef.current = false
       drawingPointsRef.current = []
@@ -322,7 +309,6 @@ function PlanView({ wallWidth, originPoint, arrowAngle, inputLength, onSetOrigin
   }, [viewport, setViewport, draw])
 
   const handleMouseUp = useCallback(() => {
-    console.log('[PlanView] mouseup', 'isDrawing:', isDrawingRef.current, 'pts:', drawingPointsRef.current.length)
     if (isPanningRef.current) { isPanningRef.current = false; return }
     if (toolModeRef.current === 'draw-wall' && isDrawingRef.current) {
       const pts = drawingPointsRef.current
@@ -349,21 +335,23 @@ function PlanView({ wallWidth, originPoint, arrowAngle, inputLength, onSetOrigin
     })
   }, [viewport, setViewport])
 
+  const cursorClass = toolMode === 'draw-wall' ? 'cursor-crosshair' : toolMode === 'pan' ? 'cursor-grab' : ''
+
   return (
-    <div style={{ position: 'absolute', inset: 0, background: '#f0fff0' }}>
+    <div className="canvas-container">
       <canvas
         ref={canvasRef}
-        style={{ width: '100%', height: '100%', display: 'block', cursor: toolMode === 'draw-wall' ? 'crosshair' : toolMode === 'pan' ? 'grab' : 'default' }}
+        className={`plan-canvas ${cursorClass}`}
         onMouseDown={handleMouseDown}
         onMouseMove={handleMouseMove}
         onMouseUp={handleMouseUp}
         onMouseLeave={handleMouseUp}
         onWheel={handleWheel}
       />
-      <div style={{ position: 'absolute', bottom: 16, right: 16, background: 'white', border: '1px solid #ccc', borderRadius: 4, padding: '6px 12px', fontSize: 12, color: '#666' }}>
+      <div className="canvas-overlay zoom-indicator">
         {Math.round(viewport.zoom * 100)}%
       </div>
-      <div style={{ position: 'absolute', top: 16, left: 16, background: 'white', border: '1px solid #ccc', borderRadius: 4, padding: '6px 12px', fontSize: 12, fontFamily: 'monospace', color: '#666' }}>
+      <div className="canvas-overlay status-indicator">
         pan: {Math.round(viewport.panX)}, {Math.round(viewport.panY)} | clicks: {clickCount}
       </div>
     </div>
@@ -373,7 +361,7 @@ function PlanView({ wallWidth, originPoint, arrowAngle, inputLength, onSetOrigin
 // ─── App ─────────────────────────────────────────────────────────────
 
 export default function App() {
-  const { viewMode, toolMode, setViewMode, setToolMode, project, undo, redo, canUndo, canRedo, addWall } = useFRMXStore()
+  const { viewMode, toolMode, setViewMode, setToolMode, project, undo, redo, canUndo, canRedo, addWall, selectedWallId, updateWall } = useFRMXStore()
   const [wallWidthInches, setWallWidthInches] = useState(6)
   const [originPoint, setOriginPoint] = useState<{x:number;y:number}| null>(null)
   const [arrowAngle, setArrowAngle] = useState(0)
@@ -384,117 +372,214 @@ export default function App() {
     { mode: 'elevation', label: 'Elevation', icon: '▤' },
     { mode: '3d', label: '3D', icon: '◇' },
   ]
+
   const TOOLS: { mode: ToolMode; label: string; icon: string }[] = [
     { mode: 'select', label: 'Select', icon: '↖' },
     { mode: 'pan', label: 'Pan', icon: '✋' },
     { mode: 'draw-wall', label: 'Draw Wall', icon: '╱' },
-    { mode: 'add-opening', label: 'Add Opening', icon: '▭' },
-    { mode: 'edit-panel', label: 'Edit Panel', icon: '✎' },
+    { mode: 'add-opening', label: 'Opening', icon: '▭' },
+    { mode: 'edit-panel', label: 'Panel', icon: '✎' },
   ]
 
+  const selectedWall = selectedWallId
+    ? project.building.levels.flatMap(l => l.walls).find(w => w.id === selectedWallId)
+    : null
+
+  const placeWall = useCallback(() => {
+    if (!inputLength || !originPoint) return
+    const lenFt = parseFloat(inputLength)
+    if (!isNaN(lenFt) && lenFt > 0) {
+      const rad = (arrowAngle * Math.PI) / 180
+      const endX = originPoint.x + Math.cos(rad) * lenFt
+      const endY = originPoint.y + Math.sin(rad) * lenFt
+      addWall({ id: nanoid(8), name: `Wall ${Date.now().toString(36).slice(-4).toUpperCase()}`, centerline: [{x: originPoint.x, y: originPoint.y}, {x: endX, y: endY}], height: 96, wallType: 'exterior', panels: [], openings: [], modules: [] })
+      setOriginPoint(null)
+      setInputLength('')
+    }
+  }, [inputLength, originPoint, arrowAngle, addWall])
+
+  const cancelWall = useCallback(() => {
+    setOriginPoint(null)
+    setInputLength('')
+  }, [])
+
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', height: '100vh', overflow: 'hidden' }}>
+    <div className="app-layout">
       {/* Toolbar */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '8px 16px', background: '#f3f4f6', borderBottom: '1px solid #d1d5db' }}>
-        <span style={{ fontWeight: 'bold', fontSize: 14, marginRight: 16 }}>FRMX</span>
+      <div className="toolbar">
+        <span className="toolbar-brand">FRMX</span>
 
         {/* View modes */}
-        <div style={{ display: 'flex', gap: 4, marginRight: 16 }}>
+        <div className="toolbar-group">
           {VIEW_MODES.map(({ mode, label, icon }) => (
-            <button key={mode} onClick={() => setViewMode(mode)}
-              style={{ padding: '6px 12px', fontSize: 12, borderRadius: 4, border: '1px solid #d1d5db', cursor: 'pointer', background: viewMode === mode ? '#2563eb' : 'white', color: viewMode === mode ? 'white' : 'black' }}>
-              <span style={{ marginRight: 4 }}>{icon}</span>{label}
+            <button
+              key={mode}
+              className={`btn btn-view ${viewMode === mode ? 'active' : ''}`}
+              onClick={() => setViewMode(mode)}
+            >
+              <span className="btn-icon">{icon}</span>
+              {label}
             </button>
           ))}
         </div>
+
+        <div className="toolbar-separator" />
 
         {/* Tools */}
-        <div style={{ display: 'flex', gap: 4, marginRight: 16 }}>
+        <div className="toolbar-group">
           {TOOLS.map(({ mode, label, icon }) => (
-            <button key={mode} onClick={() => setToolMode(mode)}
-              style={{ padding: '6px 12px', fontSize: 12, borderRadius: 4, border: '1px solid #d1d5db', cursor: 'pointer', background: toolMode === mode ? '#2563eb' : 'white', color: toolMode === mode ? 'white' : 'black' }}>
-              <span style={{ marginRight: 4 }}>{icon}</span>{label}
+            <button
+              key={mode}
+              className={`btn btn-tool ${toolMode === mode ? 'active' : ''}`}
+              onClick={() => setToolMode(mode)}
+              title={label}
+            >
+              <span className="btn-icon">{icon}</span>
             </button>
           ))}
         </div>
 
+        <div className="toolbar-separator" />
+
         {/* Wall width */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
-          <label style={{ fontSize: 12, color: '#666' }}>Wall:</label>
+        <div className="toolbar-group">
           <select
+            className="select-input"
             value={wallWidthInches}
             onChange={e => setWallWidthInches(Number(e.target.value))}
-            style={{ padding: '4px 8px', fontSize: 12, borderRadius: 4, border: '1px solid #d1d5db' }}
           >
-            <option value={3.5}>3.5" 2×4</option>
-            <option value={5.5}>5.5" 2×6</option>
+            <option value={3.5}>3.5" 2x4</option>
+            <option value={5.5}>5.5" 2x6</option>
           </select>
         </div>
 
-        {/* Wall input panel — only show when origin is set in draw-wall mode */}
+        {/* Wall input panel */}
         {toolMode === 'draw-wall' && originPoint && (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginLeft: 12, background: '#dbeafe', border: '1px solid #93c5fd', borderRadius: 6, padding: '4px 12px' }}>
-            {/* Direction arrows */}
-            <div style={{ display: 'flex', gap: 2 }}>
+          <div className="wall-input-panel">
+            <div className="direction-buttons">
               {[{label:'←', angle:180}, {label:'↑', angle:270}, {label:'↓', angle:90}, {label:'→', angle:0}].map(({label, angle}) => (
-                <button key={angle} onClick={() => setArrowAngle(angle)}
-                  style={{ width: 26, height: 26, fontSize: 13, fontWeight: 'bold', borderRadius: 3, border: '1px solid #93c5fd', cursor: 'pointer', background: arrowAngle === angle ? '#2563eb' : 'white', color: arrowAngle === angle ? 'white' : '#2563eb' }}>
+                <button
+                  key={angle}
+                  className={`direction-btn ${arrowAngle === angle ? 'active' : ''}`}
+                  onClick={() => setArrowAngle(angle)}
+                >
                   {label}
                 </button>
               ))}
             </div>
             <input
               type="number"
+              className="length-input"
               value={inputLength}
               onChange={e => setInputLength(e.target.value)}
               onKeyDown={e => {
-                if (e.key === 'Enter' && inputLength && originPoint) {
-                  const lenFt = parseFloat(inputLength)
-                  if (!isNaN(lenFt) && lenFt > 0) {
-                    const rad = (arrowAngle * Math.PI) / 180
-                    const endX = originPoint.x + Math.cos(rad) * lenFt
-                    const endY = originPoint.y + Math.sin(rad) * lenFt
-                    addWall({ id: nanoid(8), name: `Wall ${Date.now().toString(36).slice(-4).toUpperCase()}`, centerline: [{x: originPoint.x, y: originPoint.y}, {x: endX, y: endY}], height: 96, wallType: 'exterior', panels: [], openings: [], modules: [] })
-                    setOriginPoint(null)
-                    setInputLength('')
-                  }
-                }
-                if (e.key === 'Escape') { setOriginPoint(null); setInputLength('') }
+                if (e.key === 'Enter') placeWall()
+                if (e.key === 'Escape') cancelWall()
               }}
               placeholder="length (ft)"
-              style={{ width: 80, padding: '4px 8px', fontSize: 12, borderRadius: 3, border: '1px solid #93c5fd' }}
             />
-            <button onClick={() => {
-              if (!inputLength || !originPoint) return
-              const lenFt = parseFloat(inputLength)
-              if (!isNaN(lenFt) && lenFt > 0) {
-                const rad = (arrowAngle * Math.PI) / 180
-                const endX = originPoint.x + Math.cos(rad) * lenFt
-                const endY = originPoint.y + Math.sin(rad) * lenFt
-                addWall({ id: nanoid(8), name: `Wall ${Date.now().toString(36).slice(-4).toUpperCase()}`, centerline: [{x: originPoint.x, y: originPoint.y}, {x: endX, y: endY}], height: 96, wallType: 'exterior', panels: [], openings: [], modules: [] })
-                setOriginPoint(null)
-                setInputLength('')
-              }
-            }} style={{ padding: '4px 10px', fontSize: 12, background: '#2563eb', color: 'white', border: 'none', borderRadius: 4, cursor: 'pointer' }}>Place Wall</button>
-            <button onClick={() => { setOriginPoint(null); setInputLength('') }} style={{ padding: '4px 8px', fontSize: 12, background: '#f3f4f6', border: '1px solid #d1d5db', borderRadius: 4, cursor: 'pointer' }}>✕</button>
+            <button className="btn btn-primary" onClick={placeWall}>Place</button>
+            <button className="btn btn-action" onClick={cancelWall}>✕</button>
           </div>
         )}
 
-        <div style={{ width: 1, height: 24, background: '#d1d5db', margin: '0 8px' }} />
-        <button onClick={undo} disabled={!canUndo()} style={{ padding: '6px 12px', fontSize: 12, borderRadius: 4, border: '1px solid #d1d5db', cursor: canUndo() ? 'pointer' : 'not-allowed', opacity: canUndo() ? 1 : 0.4 }}>↩ Undo</button>
-        <button onClick={redo} disabled={!canRedo()} style={{ padding: '6px 12px', fontSize: 12, borderRadius: 4, border: '1px solid #d1d5db', cursor: canRedo() ? 'pointer' : 'not-allowed', opacity: canRedo() ? 1 : 0.4 }}>↪ Redo</button>
-        <div style={{ marginLeft: 'auto', fontSize: 12, color: '#666' }}>{project.name}</div>
+        <div style={{ flex: 1 }} />
+
+        {/* Undo/Redo */}
+        <div className="toolbar-group">
+          <button
+            className="btn btn-action"
+            onClick={undo}
+            disabled={!canUndo()}
+            title="Undo (Ctrl+Z)"
+          >
+            ↩
+          </button>
+          <button
+            className="btn btn-action"
+            onClick={redo}
+            disabled={!canRedo()}
+            title="Redo (Ctrl+Y)"
+          >
+            ↪
+          </button>
+        </div>
       </div>
 
-      {/* Editor area */}
-      <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
-        {viewMode === 'plan' && <PlanView wallWidth={wallWidthInches} originPoint={originPoint} arrowAngle={arrowAngle} inputLength={inputLength} onSetOrigin={setOriginPoint} />}
-        {viewMode === 'elevation' && <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, color: '#999' }}>Select a wall to view elevation</div>}
-        {viewMode === '3d' && <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 18, color: '#999' }}>3D View — coming soon</div>}
+      {/* Main content area */}
+      <div className="main-content">
+        {/* Sidebar */}
+        <div className="sidebar">
+          <div className="sidebar-section">
+            <div className="sidebar-title">Project</div>
+            <div className="sidebar-item">{project.name}</div>
+          </div>
+
+          <div className="sidebar-section">
+            <div className="sidebar-title">Walls ({project.building.levels.reduce((s, l) => s + l.walls.length, 0)})</div>
+            {project.building.levels.map(level => (
+              level.walls.map(wall => (
+                <div
+                  key={wall.id}
+                  className={`sidebar-item ${selectedWallId === wall.id ? 'selected' : ''}`}
+                  onClick={() => useFRMXStore.getState().selectWall(wall.id)}
+                >
+                  {wall.name}
+                </div>
+              ))
+            ))}
+            {project.building.levels.reduce((s, l) => s + l.walls.length, 0) === 0 && (
+              <div className="sidebar-item" style={{ color: 'var(--color-text-muted)' }}>
+                No walls yet
+              </div>
+            )}
+          </div>
+
+          {selectedWall && (
+            <div className="sidebar-section">
+              <div className="sidebar-title">Wall Properties</div>
+              <div className="property-row">
+                <span className="property-label">Name</span>
+                <span className="property-value">{selectedWall.name}</span>
+              </div>
+              <div className="property-row">
+                <span className="property-label">Height</span>
+                <span className="property-value">{selectedWall.height}"</span>
+              </div>
+              <div className="property-row">
+                <span className="property-label">Type</span>
+                <span className="property-value">{selectedWall.wallType}</span>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Canvas area */}
+        <div style={{ flex: 1, position: 'relative', overflow: 'hidden' }}>
+          {viewMode === 'plan' && (
+            <PlanView
+              wallWidth={wallWidthInches}
+              originPoint={originPoint}
+              arrowAngle={arrowAngle}
+              inputLength={inputLength}
+              onSetOrigin={setOriginPoint}
+            />
+          )}
+          {viewMode === 'elevation' && (
+            <div className="elevation-placeholder">
+              Select a wall to view elevation
+            </div>
+          )}
+          {viewMode === '3d' && (
+            <div className="view-3d-placeholder">
+              3D View — coming soon
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Info bar */}
-      <div style={{ height: 32, background: '#f3f4f6', borderTop: '1px solid #d1d5db', display: 'flex', alignItems: 'center', paddingLeft: 16, fontSize: 12, color: '#666' }}>
+      <div className="info-bar">
         {viewMode === 'plan' && <span>Plan View — {project.building.levels.reduce((s, l) => s + l.walls.length, 0)} walls | {wallWidthInches}" wall</span>}
         {viewMode === 'elevation' && <span>Elevation View</span>}
         {viewMode === '3d' && <span>3D View</span>}
